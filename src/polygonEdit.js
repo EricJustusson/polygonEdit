@@ -109,16 +109,16 @@ if (typeof(google.maps.Polygon.prototype.runEdit) === "undefined") {
           ghostPath.getPath().pop();
         });
         self.getPath().insertAt(this.marker.inex + 1, this.getPosition());
-        self.createMarkerVertex(self.getPath().getAt(this.marker.inex + 1)).marker.inex = this.marker.inex + 1;
+        createMarkerVertex(self.getPath().getAt(this.marker.inex + 1)).inex = this.marker.inex + 1;
         moveGhostMarkers(this.marker);
-        self.createGhostMarkerVertex(self.getPath().getAt(this.marker.inex + 1));
+        createGhostMarkerVertex(self.getPath().getAt(this.marker.inex + 1));
         self.getPath().forEach(function (vertex, inex) {
           if (vertex.marker) {
             vertex.marker.inex = inex;
           }
         });
       };
-      this.createGhostMarkerVertex = function (point) {
+      var createGhostMarkerVertex = function (point) {
         if (point.marker.inex < self.getPath().getLength() - 1) {
           var markerGhostVertex = new google.maps.Marker({
             position : (typeof(google.maps.geometry) === "undefined") ? new google.maps.LatLng(
@@ -137,25 +137,26 @@ if (typeof(google.maps.Polygon.prototype.runEdit) === "undefined") {
           point.ghostMarker = markerGhostVertex;
           markerGhostVertex.marker = point.marker;
           return markerGhostVertex;
-        } 
-        else if (point.marker.inex === self.getPath().getLength() - 1) {
-          var markerGhostVertex = new google.maps.Marker({
-            position : (typeof(google.maps.geometry) === "undefined") ? new google.maps.LatLng(
-                                                                         point.lat() + 0.5 * (self.getPath().getAt(0).lat() - point.lat()),
-                                                                         point.lng() + 0.5 * (self.getPath().getAt(0).lng() - point.lng()))
-                      :google.maps.geometry.spherical.interpolate(point, self.getPath().getAt(0), 0.5),
-            map : self.getMap(),
-            icon : imgGhostVertex,
-            draggable : true,
-            raiseOnDrag : false
-          });
-          google.maps.event.addListener(markerGhostVertex, "mouseover", vertexGhostMouseOver);
-          google.maps.event.addListener(markerGhostVertex, "mouseout", vertexGhostMouseOut);
-          google.maps.event.addListener(markerGhostVertex, "drag", vertexGhostDrag);
-          google.maps.event.addListener(markerGhostVertex, "dragend", vertexGhostDragEnd);
-          point.ghostMarker = markerGhostVertex;
-          markerGhostVertex.marker = point.marker;
-          return markerGhostVertex;
+        } else {
+           if (point.marker.inex === self.getPath().getLength() - 1) {
+             var markerGhostVertex = new google.maps.Marker({
+               position : (typeof(google.maps.geometry) === "undefined") ? new google.maps.LatLng(
+                                                                             point.lat() + 0.5 * (self.getPath().getAt(0).lat() - point.lat()),
+                                                                             point.lng() + 0.5 * (self.getPath().getAt(0).lng() - point.lng()))
+                          :google.maps.geometry.spherical.interpolate(point, self.getPath().getAt(0), 0.5),
+               map : self.getMap(),
+               icon : imgGhostVertex,
+               draggable : true,
+               raiseOnDrag : false
+             });
+             google.maps.event.addListener(markerGhostVertex, "mouseover", vertexGhostMouseOver);
+             google.maps.event.addListener(markerGhostVertex, "mouseout", vertexGhostMouseOut);
+             google.maps.event.addListener(markerGhostVertex, "drag", vertexGhostDrag);
+             google.maps.event.addListener(markerGhostVertex, "dragend", vertexGhostDragEnd);
+             point.ghostMarker = markerGhostVertex;
+             markerGhostVertex.marker = point.marker;
+             return markerGhostVertex;
+           }
         }
         return null;
       };
@@ -181,8 +182,7 @@ if (typeof(google.maps.Polygon.prototype.runEdit) === "undefined") {
         moveGhostMarkers(this);
       }
     };
-    var vertexRightClick = function(event) {
-      alert('here');
+    var vertexRightClick = function () {
       if (flag) {
         var Vertex = self.getPath().getAt(this.inex);
         if (this.inex === 0) {
@@ -217,7 +217,7 @@ if (typeof(google.maps.Polygon.prototype.runEdit) === "undefined") {
         self.getPath().pop().marker.setMap(null);
       }
     };
-    this.createMarkerVertex = function (point) {
+    var createMarkerVertex = function (point) {
       var markerVertex = new google.maps.Marker({
         position : point,
         map : self.getMap(),
@@ -229,42 +229,15 @@ if (typeof(google.maps.Polygon.prototype.runEdit) === "undefined") {
       google.maps.event.addListener(markerVertex, "mouseout", vertexMouseOut);
       google.maps.event.addListener(markerVertex, "drag", vertexDrag);
       google.maps.event.addListener(markerVertex, "rightclick", vertexRightClick);
-      google.maps.event.addListener(markerVertex, "dblclick", vertexRightClick);
       point.marker = markerVertex;
-      //return markerVertex;
-      return point;
+      return markerVertex;
     };
-    this.setHoverOptions = function(event) {
-      this.setOptions({
-        strokeWeight: 4,
-        strokeOpacity: 0.8
-      });
-    };
-    this.setNormalOptions = function(event) {
-      this.setOptions({
-        strokeWeight: 2,
-        strokeOpacity: 0.5
-      });
-    };
-    this.closed = function() {
-      console.log(self.getPath().length);
-      console.log(self.getPath().getAt(0));
-      console.log( self.getPath().getAt(self.getPath().length - 1));
-      if (self.getPath().length > 2 && self.getPath().getAt(0) == self.getPath().getAt(self.getPath().length - 1)) {
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
     this.getPath().forEach(function (vertex, inex) {
-      self.createMarkerVertex(vertex).marker.inex = inex;
+      createMarkerVertex(vertex).inex = inex;
       if (flag) {
-        self.createGhostMarkerVertex(vertex);
+        createGhostMarkerVertex(vertex);
       }
     });
-    //google.maps.event.addListener(self, "mouseover", self.setHoverOptions);
-    //google.maps.event.addListener(self, "mouseout", self.setNormalOptions);
   };
 }
 if (typeof(google.maps.Polygon.prototype.stopEdit) === "undefined") {

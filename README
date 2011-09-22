@@ -1,1 +1,10 @@
-Testing uploading
+Polygon creation and edit tool for Google Maps v3.
+
+To create a polygon, click on the shape in the top right corner of the map.
+
+To get rid of the trailing grey line, right click with the mouse. You can then edit the Polygon as you see fit!
+
+Enjoy!
+
+Special thanks to Tom Cocca and Dmitry Ryshkin!
+

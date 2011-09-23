@@ -316,8 +316,6 @@ function polygonDrawer(polygon, ghosts) {
     polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawUI);
     polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.clearUI);
     
-    console.log(polygon.getMap().controls.pop().toString());
-        
     if (polygon.getPath().getLength() > 0) {
       self.drawing = true;
       self.drawShape();
@@ -331,6 +329,7 @@ function polygonDrawer(polygon, ghosts) {
     google.maps.event.addDomListener(self.clearUI, 'click', function() {
       if (self.drawing){
         self.removeShape();
+        polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].clear();
         polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawUI);
       }
     });

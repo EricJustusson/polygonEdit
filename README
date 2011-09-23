@@ -6,12 +6,15 @@ Things fixed:
 
 * When the Polygon is closed, the button to draw a polygon disappears and only the close polygon button appears (Fixed the button flashing on map drag)
 
-* When you click on "Clear Polygon", the button to draw a polygon appears (to the left of "Clear Polygon")
+* When you press clear, the Polygon disappears and you only see the drawing button.
 
-
+* When you draw a fully closed Polygon, the drawing button disappears and the "clear polygon" button appears again.
 
 STILL needs to be fixed:
 
-* When you click on "Clear Polygon", the "clear polygon" button should disappear and the drawing button should appear. Right now, they're both appearing at all times.
-
 * When you close the initial Polygon shape and start creating a second one, the grey followLine is still not appearing.
+
+
+Thing's I'd like to add later:
+
+* Tooltip to tell the user to click the first point they made on the map to successfully close the Polygon and get the "clear polygon" button.

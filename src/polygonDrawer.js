@@ -1,10 +1,40 @@
+function drawControl() {
+  var drawUI = document.createElement('div');
+  drawUI.id = 'draw-polygon';
+  drawUI.style.backgroundColor = 'white';
+  drawUI.style.borderStyle = 'solid';
+  drawUI.style.borderWidth = '2px';
+  drawUI.style.cursor = 'pointer';
+  drawUI.style.textAlign = 'center';
+  drawUI.title = 'Click icon to draw a polygon';
+  var drawImage = document.createElement('img');
+  drawImage.src = "css/polyUp.png";
+  drawUI.appendChild(drawImage);
+  return drawUI;
+}
+
+function clearControl () {
+  var clearUI = document.createElement('div');
+  clearUI.id = 'clear-polygon';
+  clearUI.style.backgroundColor = 'white';
+  clearUI.style.borderStyle = 'solid';
+  clearUI.style.borderWidth = '2px';
+  clearUI.style.cursor = 'pointer';
+  clearUI.style.textAlign = 'center';
+  clearUI.title = 'Click to clear the polygon';
+  var clearText = document.createElement('p');
+  clearText.innerHTML = 'Clear Polygon';
+  clearUI.appendChild(clearText);
+  return clearUI;
+}
+
 function polygonDrawer(polygon, ghosts) {
   var self = this;
   this.polygon = polygon;
   this.ghosts = ghosts;
   this.closed = false;
-  this.drawUI = null;
-  this.clearUI = null;
+  this.drawUI = new drawControl();
+  this.clearUI = new clearControl;
   this.drawing = false;
 
   var followLine = new google.maps.Polyline({
@@ -236,6 +266,7 @@ function polygonDrawer(polygon, ghosts) {
     google.maps.event.trigger(followLine, 'rightclick');
     self.closed = true;
     self.ghosts = true;
+    self.drawing = true;
   };
 
   var createMarkerVertex = function (point) {
@@ -256,25 +287,22 @@ function polygonDrawer(polygon, ghosts) {
   };
 
   this.initControl = function () {
-    drawUI = document.createElement('div');
-    drawUI = document.createElement('div');
-    drawUI.style.backgroundColor = 'white';
-    drawUI.style.borderStyle = 'solid';
-    drawUI.style.borderWidth = '2px';
-    drawUI.style.cursor = 'pointer';
-    drawUI.style.textAlign = 'center';
-    drawUI.title = 'Click icon to draw a polygon';
-    var drawImage = document.createElement('img');
-    drawImage.src = "css/polyUp.png";
-    drawUI.appendChild(drawImage);
-    polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(drawUI);
+    polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawUI);
+    polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.clearUI);
     
     if (polygon.getPath().getLength() > 0) {
+      self.drawing = true;
       self.drawShape();
     }
-    google.maps.event.addDomListener(drawUI, 'click', function() {
+    google.maps.event.addDomListener(self.drawUI, 'click', function() {
+      console.log(self.drawing);
       if (!self.drawing){
         self.createShape();
+      }
+    });
+    google.maps.event.addDomListener(self.clearUI, 'click', function() {
+      if (self.drawing){
+        self.removeShape();
       }
     });
   };
@@ -304,6 +332,7 @@ function polygonDrawer(polygon, ghosts) {
   this.removeShape = function() {
     this.removePoints();
     polygon.setPath([]);
+    self.drawing = false;
   };
 
   this.createShape = function() {

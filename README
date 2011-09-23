@@ -10,6 +10,8 @@ Things fixed:
 
 * When you draw a fully closed Polygon, the drawing button disappears and the "clear polygon" button appears again.
 
+
+
 STILL needs to be fixed:
 
 * When you close the initial Polygon shape and start creating a second one, the grey followLine is still not appearing.

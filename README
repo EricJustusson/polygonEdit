@@ -6,14 +6,12 @@ Things fixed:
 
 * When the Polygon is closed, the button to draw a polygon disappears and only the close polygon button appears (Fixed the button flashing on map drag)
 
-* When you click on "Clear Polygon" the button to draw a Polygon appears (at index 0 in controls array, hence a bug below)
+* When you click on "Clear Polygon", the button to draw a polygon appears (to the left of "Clear Polygon")
 
 
 
 STILL needs to be fixed:
 
-* When you click on "Clear Polygon", the "clear polygon" button should disappear and the drawing button should appear.
+* When you click on "Clear Polygon", the "clear polygon" button should disappear and the drawing button should appear. Right now, they're both appearing at all times.
 
-* Also, the buttons keep appearing to the left of each other (Perhaps it keeps increasing the index they're stored at? On the GM API, it says the place the controls appear are based on the API)
-
-* When you close the initial Polygon shape and start creating a new one, the grey followLine is no longer appearing.
+* When you close the initial Polygon shape and start creating a second one, the grey followLine is still not appearing.

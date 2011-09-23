@@ -270,7 +270,7 @@ function polygonDrawer(polygon, ghosts) {
   };
 
   var closePoly = function() {
-    polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].pop();
+    polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].clear();
     polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.clearUI);
     
     polygon.getMap().setOptions({ draggableCursor: 'pointer' });
@@ -323,18 +323,15 @@ function polygonDrawer(polygon, ghosts) {
       self.drawShape();
     }
     google.maps.event.addDomListener(self.drawUI, 'click', function() {
-      //polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].pop();
       console.log(self.drawing);
       if (!self.drawing){
         self.createShape();
       }
     });
     google.maps.event.addDomListener(self.clearUI, 'click', function() {
-      //polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].pop();
-      polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawUI);
-      
       if (self.drawing){
         self.removeShape();
+        polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawUI);
       }
     });
   };

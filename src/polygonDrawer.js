@@ -3,7 +3,8 @@ function polygonDrawer(polygon, ghosts) {
   this.polygon = polygon;
   this.ghosts = ghosts;
   this.closed = false;
-  this.controlUI = document.createElement('div');
+  this.drawUI = null;
+  this.clearUI = null;
   this.drawing = false;
 
   var followLine = new google.maps.Polyline({
@@ -221,16 +222,20 @@ function polygonDrawer(polygon, ghosts) {
 
   var vertexClick = function() {
     if(this == polygon.getPath().getAt(0).marker && !self.ghosts) {
-      polygon.getMap().setOptions({ draggableCursor: 'hand' });
-      polygon.getPath().forEach(function (vertex, inex) {
-        createGhostMarkerVertex(vertex);
-      });
-      google.maps.event.clearListeners(polygon.getMap(), "click");
-      google.maps.event.clearListeners(polygon.getMap(), "mousemove");
-      google.maps.event.trigger(followLine, 'rightclick');
-      self.closed = true;
-      self.ghosts = true;
+      closePoly();
     }
+  };
+
+  var closePoly = function() {
+    polygon.getMap().setOptions({ draggableCursor: 'hand' });
+    polygon.getPath().forEach(function (vertex, inex) {
+      createGhostMarkerVertex(vertex);
+    });
+    google.maps.event.clearListeners(polygon.getMap(), "click");
+    google.maps.event.clearListeners(polygon.getMap(), "mousemove");
+    google.maps.event.trigger(followLine, 'rightclick');
+    self.closed = true;
+    self.ghosts = true;
   };
 
   var createMarkerVertex = function (point) {
@@ -251,26 +256,25 @@ function polygonDrawer(polygon, ghosts) {
   };
 
   this.initControl = function () {
-    controlUI = document.createElement('div');
-    controlUI.style.backgroundColor = 'white';
-    controlUI.style.borderStyle = 'solid';
-    controlUI.style.borderWidth = '2px';
-    controlUI.style.cursor = 'pointer';
-    controlUI.style.textAlign = 'center';
-    controlUI.title = 'Click icon to draw a polygon';
-    var controlImage = document.createElement('img');
-    controlImage.src = "css/polyUp.png";
-    controlUI.appendChild(controlImage);
-    polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(controlUI);
+    drawUI = document.createElement('div');
+    drawUI = document.createElement('div');
+    drawUI.style.backgroundColor = 'white';
+    drawUI.style.borderStyle = 'solid';
+    drawUI.style.borderWidth = '2px';
+    drawUI.style.cursor = 'pointer';
+    drawUI.style.textAlign = 'center';
+    drawUI.title = 'Click icon to draw a polygon';
+    var drawImage = document.createElement('img');
+    drawImage.src = "css/polyUp.png";
+    drawUI.appendChild(drawImage);
+    polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(drawUI);
     
     if (polygon.getPath().getLength() > 0) {
-      //controlUI.className = 'selected';
       self.drawShape();
     }
-    google.maps.event.addDomListener(controlUI, 'click', function() {
+    google.maps.event.addDomListener(drawUI, 'click', function() {
       if (!self.drawing){
         self.createShape();
-        //controlUI.className = 'selected';
       }
     });
   };

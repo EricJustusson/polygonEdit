@@ -213,17 +213,17 @@ if (typeof(google.maps.Polygon.prototype.runEdit) === "undefined") {
         self.getPath().pop().marker.setMap(null);
       }
     };
-		var vertexClick = function() {
-			if(this == self.getPath().getAt(0).marker && !ghosts) {
-			  map.setOptions({ draggableCursor: 'hand' });
+    var vertexClick = function() {
+      if(this == self.getPath().getAt(0).marker && !ghosts) {
+        map.setOptions({ draggableCursor: 'hand' });
         self.getPath().forEach(function (vertex, inex) {
-		      self.createGhostMarkerVertex(vertex);
-		    });
-		    google.maps.event.clearListeners(self.getMap(), "click");
-		    google.maps.event.trigger(self.getMap(), 'rightclick');
-		    ghosts = true;
-			}
-		};
+          self.createGhostMarkerVertex(vertex);
+        });
+        google.maps.event.clearListeners(self.getMap(), "click");
+        google.maps.event.trigger(self.getMap(), 'rightclick');
+        ghosts = true;
+      }
+    };
     var createMarkerVertex = function (point) {
       var markerVertex = new google.maps.Marker({
         position : point,
@@ -236,7 +236,7 @@ if (typeof(google.maps.Polygon.prototype.runEdit) === "undefined") {
       google.maps.event.addListener(markerVertex, "mouseout", vertexMouseOut);
       google.maps.event.addListener(markerVertex, "drag", vertexDrag);
       google.maps.event.addListener(markerVertex, "rightclick", vertexRightClick);
-			google.maps.event.addListener(markerVertex, "click", vertexClick);
+      google.maps.event.addListener(markerVertex, "click", vertexClick);
       point.marker = markerVertex;
       return markerVertex;
     };

@@ -1,13 +1,8 @@
 var map;
 var mapPolygon;
-var drawPolygon;
-var followLine;
+var draw;
 
 function initialize () {
-  var COLORS = [
-    ["red", "#ff0000"], ["orange", "#ff8800"], ["green","#008000"],
-    ["blue", "#000080"], ["purple", "#800080"]
-  ];
   map = new google.maps.Map(
           document.getElementById("map"), {
             zoom: 14,
@@ -39,61 +34,6 @@ function initialize () {
                     new google.maps.LatLng(50.91607609098315,34.81301346032714)
                   ]
                 });
-  mapPolygon.runEdit(true);
-  
-  followLine = new google.maps.Polyline({
-                  map: map,
-                  path: [],
-                  strokeColor: "#787878",
-                  strokeOpacity: 1,
-                  strokeWeight: 2
-                });
-  
-  google.maps.event.addListener(followLine, 'click', function (point) {
-    google.maps.event.trigger(map, 'click', point);
-  });
-  
-  google.maps.event.addListener(followLine, 'rightclick', function () {
-    google.maps.event.trigger(map, 'rightclick');
-  });
-  
-  document.getElementById("newPolygon").onclick = function () {
-    if (mapPolygon != null) {
-      mapPolygon.stopEdit();
-      mapPolygon.setMap(null);
-      mapPolygon = null;
-    }
-    if (drawPolygon != null) {
-      drawPolygon.stopEdit();
-      drawPolygon.setMap(null);
-      drawPolygon = null;
-    }
-    google.maps.event.clearListeners(map, "click");
-    google.maps.event.clearListeners(map, "mousemove");
-    drawPolygon = new google.maps.Polygon({map : map,
-                    strokeColor   : '#ff0000',
-                    strokeOpacity : 0.6,
-                    strokeWeight  : 4,
-                    path:[]
-                  });
-    map.setOptions({ draggableCursor: 'crosshair' });
-    google.maps.event.addListener(map, 'click', function(point){
-      drawPolygon.stopEdit();
-      drawPolygon.getPath().push(point.latLng);
-      drawPolygon.runEdit(false);
-    });
-    
-    google.maps.event.addListener(map, 'rightclick', function () {
-      followLine.setMap(null);
-    });
-    
-    google.maps.event.addListener(map, 'mousemove', function(point) {
-      var pathLength = drawPolygon.getPath().getLength();
-      if (pathLength >= 1) {
-        var startingPoint = drawPolygon.getPath().getAt(pathLength - 1);
-        var followCoordinates = [startingPoint, point.latLng];
-        followLine.setPath(followCoordinates);
-      }
-    });
-  }
+  draw = new polygonDrawer(mapPolygon, true);
+  draw.initControl();
 }

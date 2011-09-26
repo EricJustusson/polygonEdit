@@ -282,12 +282,8 @@ function polygonDrawer(polygon, ghosts) {
     });
     google.maps.event.addListener(polygon.getMap(), 'mousemove', function(point) {
       polygon.setOptions(PolBeforeCloseOpts);
-      console.log("on polygon mousemove");
     });
-    /* 
-    had to comment for the darker fill on hover of polygon feature
-    google.maps.event.clearListeners(polygon.getMap(), "mousemove");
-    */
+    
     google.maps.event.trigger(followLine, 'rightclick');
     self.closed = true;
     self.ghosts = true;
@@ -320,7 +316,6 @@ function polygonDrawer(polygon, ghosts) {
       self.drawShape();
     }
     google.maps.event.addDomListener(self.drawUI, 'click', function() {
-      console.log(self.drawing);
       if (!self.drawing){
         self.createShape();
       }
@@ -379,37 +374,24 @@ function polygonDrawer(polygon, ghosts) {
     });
     
     google.maps.event.addListener(followLine, 'rightclick', function () {
-      followLine.setMap(null);
-    });
-    /*
-    //attempting to show/hide icons on bounds_changed and idle
-    
-    google.maps.event.addListener(polygon.getMap(), 'bounds_changed', function(){
-      self.drawUI.style.visibility = 'hidden';
-      self.drawUI.style.visibility = 'hidden';
+      followLine.setPath([]);
     });
     
-    google.maps.event.addListener(polygon, 'bounds_changed', function(){
-      self.drawUI.style.visibility = 'hidden';
-      self.drawUI.style.visibility = 'hidden';
-    });
-    
-    google.maps.event.addListener(polygon.getMap(), 'idle', function(){
-      self.drawUI.style.visibility = 'hidden';
-    });
-    */
     google.maps.event.addListener(polygon.getMap(), 'click', function(point){
       self.removePoints();
       polygon.getPath().push(point.latLng);
       self.drawShape();
-    }); 
+    });
+    
     google.maps.event.addListener(polygon.getMap(), 'mousemove', function(point) {
-      polygon.setOptions(PolBeforeCloseOpts);
-      var pathLength = polygon.getPath().getLength();
-      if (pathLength >= 1) {
-        var startingPoint = polygon.getPath().getAt(pathLength - 1);
-        var followCoordinates = [startingPoint, point.latLng];
-        followLine.setPath(followCoordinates);
+      if (self.closed != true) {
+        polygon.setOptions(PolBeforeCloseOpts);
+        var pathLength = polygon.getPath().getLength();
+        if (pathLength >= 1) {
+          var startingPoint = polygon.getPath().getAt(pathLength - 1);
+          var followCoordinates = [startingPoint, point.latLng];
+          followLine.setPath(followCoordinates);
+        }
       }
     });
   };

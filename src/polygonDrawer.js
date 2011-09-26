@@ -33,7 +33,7 @@ function polygonDrawer(polygon, ghosts) {
   this.polygon = polygon;
   this.ghosts = ghosts;
   this.closed = false;
-  this.drawUI = new drawControl();
+  this.drawUI = new drawControl;
   this.clearUI = new clearControl;
   this.drawing = false;
 
@@ -41,8 +41,8 @@ function polygonDrawer(polygon, ghosts) {
                       map: polygon.getMap(),
                       path: [],
                       strokeColor: "#787878",
-                      strokeOpacity: 1,
-                      strokeWeight: 2
+                      strokeOpacity: .6,
+                      strokeWeight: 3
                     });
 
   var imgGhostVertex = new google.maps.MarkerImage(
@@ -74,6 +74,16 @@ function polygonDrawer(polygon, ghosts) {
                       strokeWeight : polygon.strokeWeight
                     });
 
+  var PolAfterCloseOpts =  {
+                    fillColor: "#FF0000",
+                    fillOpacity: .35
+                    };
+                           
+  var PolBeforeCloseOpts = {
+                    fillColor: "#FF0000",
+                    fillOpacity: .15
+                    };
+
   var vertexGhostMouseOver = function () {
     this.setIcon(imgGhostVertexOver);
   };
@@ -83,6 +93,7 @@ function polygonDrawer(polygon, ghosts) {
   };
 
   var vertexGhostDrag = function () {
+    polygon.setOptions(PolAfterCloseOpts);  
     if (ghostPath.getPath().getLength() === 0) {
       if (this.marker.inex < polygon.getPath().getLength() - 1) {
         ghostPath.setPath([this.marker.getPosition(), this.getPosition(), polygon.getPath().getAt(this.marker.inex + 1)]);
@@ -97,6 +108,7 @@ function polygonDrawer(polygon, ghosts) {
   };
 
   var moveGhostMarkers = function (marker) {
+    polygon.setOptions(PolAfterCloseOpts);
     var Vertex = polygon.getPath().getAt(marker.inex);
     if (marker.inex === 0) {
       var prevVertex = polygon.getPath().getAt(polygon.getPath().getLength() - 1);
@@ -137,6 +149,7 @@ function polygonDrawer(polygon, ghosts) {
   };
 
   var vertexGhostDragEnd = function () {
+    polygon.setOptions(PolAfterCloseOpts);
     ghostPath.getPath().forEach(function () {
       ghostPath.getPath().pop();
     });
@@ -257,12 +270,24 @@ function polygonDrawer(polygon, ghosts) {
   };
 
   var closePoly = function() {
-    polygon.getMap().setOptions({ draggableCursor: 'hand' });
+    polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].clear();
+    polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.clearUI);
+    polygon.getMap().setOptions({ draggableCursor: 'pointer' });
     polygon.getPath().forEach(function (vertex, inex) {
       createGhostMarkerVertex(vertex);
     });
     google.maps.event.clearListeners(polygon.getMap(), "click");
+    google.maps.event.addListener(polygon, 'mousemove', function (point) {
+      polygon.setOptions(PolAfterCloseOpts);
+    });
+    google.maps.event.addListener(polygon.getMap(), 'mousemove', function(point) {
+      polygon.setOptions(PolBeforeCloseOpts);
+      console.log("on polygon mousemove");
+    });
+    /* 
+    had to comment for the darker fill on hover of polygon feature
     google.maps.event.clearListeners(polygon.getMap(), "mousemove");
+    */
     google.maps.event.trigger(followLine, 'rightclick');
     self.closed = true;
     self.ghosts = true;
@@ -303,6 +328,8 @@ function polygonDrawer(polygon, ghosts) {
     google.maps.event.addDomListener(self.clearUI, 'click', function() {
       if (self.drawing){
         self.removeShape();
+        polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].clear();
+        polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawUI);
       }
     });
   };
@@ -344,6 +371,7 @@ function polygonDrawer(polygon, ghosts) {
     
     google.maps.event.clearListeners(polygon.getMap(), "click");
     google.maps.event.clearListeners(polygon.getMap(), "mousemove");
+    google.maps.event.clearListeners(polygon, "mousemove");
     
     google.maps.event.addListener(followLine, 'click', function (point) {
       google.maps.event.trigger(polygon.getMap(), 'click', point);
@@ -353,14 +381,30 @@ function polygonDrawer(polygon, ghosts) {
     google.maps.event.addListener(followLine, 'rightclick', function () {
       followLine.setMap(null);
     });
+    /*
+    //attempting to show/hide icons on bounds_changed and idle
     
+    google.maps.event.addListener(polygon.getMap(), 'bounds_changed', function(){
+      self.drawUI.style.visibility = 'hidden';
+      self.drawUI.style.visibility = 'hidden';
+    });
+    
+    google.maps.event.addListener(polygon, 'bounds_changed', function(){
+      self.drawUI.style.visibility = 'hidden';
+      self.drawUI.style.visibility = 'hidden';
+    });
+    
+    google.maps.event.addListener(polygon.getMap(), 'idle', function(){
+      self.drawUI.style.visibility = 'hidden';
+    });
+    */
     google.maps.event.addListener(polygon.getMap(), 'click', function(point){
       self.removePoints();
       polygon.getPath().push(point.latLng);
       self.drawShape();
-    });
-    
+    }); 
     google.maps.event.addListener(polygon.getMap(), 'mousemove', function(point) {
+      polygon.setOptions(PolBeforeCloseOpts);
       var pathLength = polygon.getPath().getLength();
       if (pathLength >= 1) {
         var startingPoint = polygon.getPath().getAt(pathLength - 1);

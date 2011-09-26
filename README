@@ -1,10 +1,22 @@
-Polygon creation and edit tool for Google Maps v3.
+Things fixed:
 
-To create a polygon, click on the shape in the top right corner of the map.
+* Provide a darker fill for the Polygon once it is closed and on the Polygon mousemove event.
 
-To get rid of the trailing grey line, right click with the mouse. You can then edit the Polygon as you see fit!
+* Changed the cursor back to a hand once a Polygon is closed.
 
-Enjoy!
+* When the Polygon is closed, the button to draw a polygon disappears and only the close polygon button appears (Fixed the button flashing on map drag)
 
-Special thanks to Tom Cocca and Dmitry Ryshkin!
+* When you press clear, the Polygon disappears and you only see the drawing button.
 
+* When you draw a fully closed Polygon, the drawing button disappears and the "clear polygon" button appears again.
+
+
+
+STILL needs to be fixed:
+
+* When you close the initial Polygon shape and start creating a second one, the grey followLine is still not appearing.
+
+
+Thing's I'd like to add later:
+
+* Tooltip to tell the user to click the first point they made on the map to successfully close the Polygon and get the "clear polygon" button.

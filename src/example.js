@@ -13,8 +13,10 @@ function initialize () {
   
   mapPolygon = new google.maps.Polygon({
                   map           : map,
-                  strokeColor   : '#ff0000',
-                  strokeOpacity : 0.6,
+                  fillColor: "#FF0000",
+                  fillOpacity: .15,
+                  strokeColor   : '#787878',
+                  strokeOpacity : .8,
                   strokeWeight  : 4,
                   path          : [
                     new google.maps.LatLng(50.91607609098315,34.80485954492187),

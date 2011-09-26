@@ -10,13 +10,14 @@ Things fixed:
 
 * When you draw a fully closed Polygon, the drawing button disappears and the "clear polygon" button appears again.
 
+* When you close the initial Polygon shape and start creating a second one, the grey followLine is still not appearing.
+
+* Tooltip to tell the user to click the first point they made on the map to successfully close the Polygon and get the "clear polygon" button.
+
+* Only show tooltip when a user creates a point on the map. Remove tooltip when the Polygon is closed.
+
 
 
 STILL needs to be fixed:
 
-* When you close the initial Polygon shape and start creating a second one, the grey followLine is still not appearing.
-
-
-Thing's I'd like to add later:
-
-* Tooltip to tell the user to click the first point they made on the map to successfully close the Polygon and get the "clear polygon" button.
+* Custom cursor with 'css/crosshairs.png' image

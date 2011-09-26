@@ -341,9 +341,10 @@ function polygonDrawer(polygon, ghosts) {
       draggable : true,
       raiseOnDrag : false
     });
-    //if (polygon.getPath().getLength() == 1){
-    //  infobox.open(polygon.getMap(), markerVertex);
-    //}
+    if (polygon.getPath().getLength() == 1){
+      polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawControl.tooltip);
+    }
+    
     google.maps.event.addListener(markerVertex, "mouseover", vertexMouseOver);
     google.maps.event.addListener(markerVertex, "mouseout", vertexMouseOut);
     google.maps.event.addListener(markerVertex, "drag", vertexDrag);
@@ -367,7 +368,6 @@ function polygonDrawer(polygon, ghosts) {
        self.drawControl.drawImage.src = "css/polyDown.png";
        self.drawControl.drawUI.style.padding = "2px";     
        self.createShape();
-       polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawControl.tooltip);
       }
     });
     google.maps.event.addDomListener(self.clearUI, 'click', function() {
@@ -416,7 +416,7 @@ function polygonDrawer(polygon, ghosts) {
     self.ghosts = false;
     self.drawing = true;
     polygon.getMap().setOptions({ draggableCursor: 'crosshair' });
-  
+    
     google.maps.event.clearListeners(polygon.getMap(), "click");
     google.maps.event.clearListeners(polygon.getMap(), "mousemove");
     google.maps.event.clearListeners(polygon, "mousemove");
@@ -440,6 +440,7 @@ function polygonDrawer(polygon, ghosts) {
       if (self.closed != true) {
         polygon.setOptions(PolBeforeCloseOpts);
         var pathLength = polygon.getPath().getLength();
+        
         if (pathLength >= 1) {
           var startingPoint = polygon.getPath().getAt(pathLength - 1);
           var followCoordinates = [startingPoint, point.latLng];

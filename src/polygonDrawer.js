@@ -1,16 +1,34 @@
 function drawControl() {
-  var drawUI = document.createElement('div');
-  drawUI.id = 'draw-polygon';
-  drawUI.style.backgroundColor = 'white';
-  drawUI.style.borderStyle = 'solid';
-  drawUI.style.borderWidth = '2px';
-  drawUI.style.cursor = 'pointer';
-  drawUI.style.textAlign = 'center';
-  drawUI.title = 'Click icon to draw a polygon';
-  var drawImage = document.createElement('img');
-  drawImage.src = "css/polyUp.png";
-  drawUI.appendChild(drawImage);
-  return drawUI;
+  var self = this;
+  this.drawUI = document.createElement('div');
+  this.drawUI.id = 'draw-polygon';
+  this.drawUI.style.backgroundColor = 'white';
+  this.drawUI.style.borderStyle = 'solid';
+  this.drawUI.style.borderWidth = '2px';
+  this.drawUI.style.cursor = 'pointer';
+  this.drawUI.style.textAlign = 'center';
+  this.drawUI.style.padding = "2px";     
+  this.drawUI.title = 'Click icon to draw a polygon';
+  this.drawImage = document.createElement('img');
+  this.drawImage.src = "css/polyUp.png";
+  this.drawUI.appendChild(this.drawImage);
+
+  this.tooltip = document.createElement('div');
+  this.tooltip.id = 'tooltip';
+  this.tooltip.style.backgroundColor = 'white';
+  this.tooltip.style.borderStyle = 'solid';
+  this.tooltip.style.borderWidth = '2px';
+  this.tooltip.style.cursor = 'pointer';
+  this.tooltip.style.textAlign = 'center';
+  this.tooltip.style.padding = "2px";
+  this.tooltip.style.fontsize = "10px"; 
+  var text = document.createElement('p');
+  text.innerHTML = 'Click the first point again<br />to finish drawing the shape.';
+  text.style.marginTop = "-10px";
+  this.tooltip.appendChild(text);
+  
+  return self;
+  
 }
 
 function clearControl () {
@@ -33,7 +51,7 @@ function polygonDrawer(polygon, ghosts) {
   this.polygon = polygon;
   this.ghosts = ghosts;
   this.closed = false;
-  this.drawUI = new drawControl;
+  this.drawControl = new drawControl;
   this.clearUI = new clearControl;
   this.drawing = false;
 
@@ -44,7 +62,29 @@ function polygonDrawer(polygon, ghosts) {
                       strokeOpacity: .6,
                       strokeWeight: 3
                     });
-
+  /*
+  var boxText = document.createElement("div");
+  boxText.style.cssText = "border: 1px solid black; margin-top: 0px; background: white; padding: 5px;";
+  boxText.innerHTML = "Click on this point again to close the shape.";                    
+  var myOptions = {
+                   content: boxText
+                  ,disableAutoPan: true
+                  ,maxWidth: 0
+                  ,pixelOffset: new google.maps.Size(0, 0)
+                  ,zIndex: null
+                  ,boxStyle: { 
+                    opacity: 0.75
+                    ,width: "140px"
+                    ,height: "30px"
+                   }
+                  ,infoBoxClearance: new google.maps.Size(1, 1)
+                  ,isHidden: false
+                  ,pane: "mapPane"
+                  ,enableEventPropagation: false
+          };
+  
+  var infobox = new InfoBox(myOptions);
+  */
   var imgGhostVertex = new google.maps.MarkerImage(
                           'css/ghostVertex.png', new google.maps.Size(11, 11),
                           new google.maps.Point(0, 0), new google.maps.Point(6, 6)
@@ -270,6 +310,7 @@ function polygonDrawer(polygon, ghosts) {
   };
 
   var closePoly = function() {
+    //infobox.close();
     polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].clear();
     polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.clearUI);
     polygon.getMap().setOptions({ draggableCursor: 'pointer' });
@@ -280,11 +321,13 @@ function polygonDrawer(polygon, ghosts) {
     google.maps.event.addListener(polygon, 'mousemove', function (point) {
       polygon.setOptions(PolAfterCloseOpts);
     });
-    google.maps.event.addListener(polygon.getMap(), 'mousemove', function(point) {
+    google.maps.event.addListener(polygon, 'mouseout', function(point) {
       polygon.setOptions(PolBeforeCloseOpts);
     });
-    
+    google.maps.event.clearListeners(polygon.getMap(), "mousemove");
     google.maps.event.trigger(followLine, 'rightclick');
+    google.maps.event.clearListeners(followLine, "click");
+    google.maps.event.clearListeners(followLine, "rightclick");
     self.closed = true;
     self.ghosts = true;
     self.drawing = true;
@@ -298,6 +341,9 @@ function polygonDrawer(polygon, ghosts) {
       draggable : true,
       raiseOnDrag : false
     });
+    //if (polygon.getPath().getLength() == 1){
+    //  infobox.open(polygon.getMap(), markerVertex);
+    //}
     google.maps.event.addListener(markerVertex, "mouseover", vertexMouseOver);
     google.maps.event.addListener(markerVertex, "mouseout", vertexMouseOut);
     google.maps.event.addListener(markerVertex, "drag", vertexDrag);
@@ -308,23 +354,28 @@ function polygonDrawer(polygon, ghosts) {
   };
 
   this.initControl = function () {
-    polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawUI);
-    polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.clearUI);
-    
     if (polygon.getPath().getLength() > 0) {
+      polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.clearUI);
       self.drawing = true;
       self.drawShape();
     }
-    google.maps.event.addDomListener(self.drawUI, 'click', function() {
-      if (!self.drawing){
-        self.createShape();
+    else {
+      polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawControl.drawUI);
+    }
+    google.maps.event.addDomListener(self.drawControl.drawUI, 'click', function() {
+      if (!self.drawing) {
+       self.drawControl.drawImage.src = "css/polyDown.png";
+       self.drawControl.drawUI.style.padding = "2px";     
+       self.createShape();
+       polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawControl.tooltip);
       }
     });
     google.maps.event.addDomListener(self.clearUI, 'click', function() {
-      if (self.drawing){
+      if (self.drawing) {
         self.removeShape();
         polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].clear();
-        polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawUI);
+        polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawControl.drawUI);
+        self.drawControl.drawImage.src = "css/polyUp.png";
       }
     });
   };
@@ -355,18 +406,26 @@ function polygonDrawer(polygon, ghosts) {
     this.removePoints();
     polygon.setPath([]);
     self.drawing = false;
+    self.closed = false;
+    self.ghosts = false;
   };
 
   this.createShape = function() {
+    self.removeShape();
     self.closed = false;
     self.ghosts = false;
     self.drawing = true;
-    self.removeShape();
     polygon.getMap().setOptions({ draggableCursor: 'crosshair' });
-    
+  
     google.maps.event.clearListeners(polygon.getMap(), "click");
     google.maps.event.clearListeners(polygon.getMap(), "mousemove");
     google.maps.event.clearListeners(polygon, "mousemove");
+    
+    google.maps.event.addListener(polygon.getMap(), 'click', function(point) {
+      self.removePoints();
+      polygon.getPath().push(point.latLng);
+      self.drawShape();
+    });
     
     google.maps.event.addListener(followLine, 'click', function (point) {
       google.maps.event.trigger(polygon.getMap(), 'click', point);
@@ -375,12 +434,6 @@ function polygonDrawer(polygon, ghosts) {
     
     google.maps.event.addListener(followLine, 'rightclick', function () {
       followLine.setPath([]);
-    });
-    
-    google.maps.event.addListener(polygon.getMap(), 'click', function(point){
-      self.removePoints();
-      polygon.getPath().push(point.latLng);
-      self.drawShape();
     });
     
     google.maps.event.addListener(polygon.getMap(), 'mousemove', function(point) {

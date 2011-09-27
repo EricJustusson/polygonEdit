@@ -52,13 +52,14 @@ function polygonDrawer(polygon, ghosts) {
   this.drawControl = new drawControl;
   this.clearUI = new clearControl;
   this.drawing = false;
-
+  
   var followLine = new google.maps.Polyline({
                       map: polygon.getMap(),
                       path: [],
                       strokeColor: "#787878",
                       strokeOpacity: .6,
-                      strokeWeight: 3
+                      strokeWeight: 3,
+                      clickable: false
                     });
  
   var imgGhostVertex = new google.maps.MarkerImage(
@@ -191,7 +192,11 @@ function polygonDrawer(polygon, ghosts) {
         draggable : true,
         raiseOnDrag : false
       });
-      google.maps.event.addListener(markerGhostVertex, "mouseover", vertexGhostMouseOver);
+      
+      google.maps.event.addListener(markerGhostVertex, "mouseover", vertexGhostMouseOver, function(){
+        polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair' });
+      });
+    
       google.maps.event.addListener(markerGhostVertex, "mouseout", vertexGhostMouseOut);
       google.maps.event.addListener(markerGhostVertex, "drag", vertexGhostDrag);
       google.maps.event.addListener(markerGhostVertex, "dragend", vertexGhostDragEnd);
@@ -406,6 +411,7 @@ function polygonDrawer(polygon, ghosts) {
     self.closed = false;
     self.ghosts = false;
     self.drawing = true;
+    
     polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair'});
     
     google.maps.event.clearListeners(polygon.getMap(), "click");
@@ -419,34 +425,11 @@ function polygonDrawer(polygon, ghosts) {
       self.drawShape();
     });
     
-    google.maps.event.addListener(followLine, 'click', function (point) {
-      console.log("On followline click.");
-      google.maps.event.trigger(polygon.getMap(), 'click', point);
-      followLine.setPath([]);
-    });
-    
     google.maps.event.addListener(followLine, 'rightclick', function () {
       followLine.setPath([]);
     });
     
-    
-    google.maps.event.addListener(followLine, 'mouseover', function () {
-      console.log("On followline mouseover.");
-      polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair'});
-    });
-    
-    google.maps.event.addListener(followLine, 'mousemove', function () {
-      console.log("On on followLine mousemove.");
-      polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair'});
-    });
-    
-    google.maps.event.addListener(followLine, 'mouseout', function () {
-      console.log("On followline mouseout.");
-      polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair'});
-    });
-    
     google.maps.event.addListener(polygon.getMap(), 'mousemove', function(point) {
-      polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair' });
       console.log("On Map mousemove.");
       if (self.closed != true) {
         polygon.setOptions(PolBeforeCloseOpts);

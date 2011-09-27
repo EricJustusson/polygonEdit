@@ -197,6 +197,9 @@ function polygonDrawer(polygon, ghosts) {
       google.maps.event.addListener(markerGhostVertex, "dragend", vertexGhostDragEnd);
       point.ghostMarker = markerGhostVertex;
       markerGhostVertex.marker = point.marker;
+      if (self.closed == true) {
+        markerGhostVertex.setCursor('move');
+      }
       return markerGhostVertex;
     }
     else {
@@ -211,14 +214,15 @@ function polygonDrawer(polygon, ghosts) {
            draggable : true,
            raiseOnDrag : false
          });
-         google.maps.event.addListener(markerGhostVertex, "mouseover", vertexGhostMouseOver, function(){
-            polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair' });
-          });
+         google.maps.event.addListener(markerGhostVertex, "mouseover", vertexGhostMouseOver);
          google.maps.event.addListener(markerGhostVertex, "mouseout", vertexGhostMouseOut);
          google.maps.event.addListener(markerGhostVertex, "drag", vertexGhostDrag);
          google.maps.event.addListener(markerGhostVertex, "dragend", vertexGhostDragEnd);
          point.ghostMarker = markerGhostVertex;
          markerGhostVertex.marker = point.marker;
+         if (self.closed == true) {
+           markerGhostVertex.setCursor('move');
+         }
          return markerGhostVertex;
        }
     }
@@ -308,6 +312,12 @@ function polygonDrawer(polygon, ghosts) {
     self.closed = true;
     self.ghosts = true;
     self.drawing = true;
+    polygon.getPath().forEach(function (vertex, inex) {
+      vertex.marker.setCursor('move');
+      if (self.ghosts) {
+        vertex.ghostMarker.setCursor('move');
+      }
+    });
   };
 
   var createMarkerVertex = function (point) {
@@ -318,9 +328,13 @@ function polygonDrawer(polygon, ghosts) {
       draggable : true,
       raiseOnDrag : false
     });
+    if (self.closed == true) {
+      markerVertex.setCursor('move');
+    }
     if (polygon.getPath().getLength() == 1){
       polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawControl.tooltip);
     }
+    
     google.maps.event.addListener(markerVertex, "mouseover", vertexMouseOver);
     google.maps.event.addListener(markerVertex, "mouseout", vertexMouseOut);
     google.maps.event.addListener(markerVertex, "drag", vertexDrag);
@@ -334,6 +348,7 @@ function polygonDrawer(polygon, ghosts) {
     if (polygon.getPath().getLength() > 0) {
       polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.clearUI);
       self.drawing = true;
+      self.closed =true;
       self.drawShape();
     }
     else {
@@ -398,12 +413,14 @@ function polygonDrawer(polygon, ghosts) {
     google.maps.event.clearListeners(polygon, "mousemove");
     
     google.maps.event.addListener(polygon.getMap(), 'click', function(point) {
+      console.log("On Map click.");
       self.removePoints();
       polygon.getPath().push(point.latLng);
       self.drawShape();
     });
     
     google.maps.event.addListener(followLine, 'click', function (point) {
+      console.log("On followline click.");
       google.maps.event.trigger(polygon.getMap(), 'click', point);
       followLine.setPath([]);
     });
@@ -412,7 +429,25 @@ function polygonDrawer(polygon, ghosts) {
       followLine.setPath([]);
     });
     
+    
+    google.maps.event.addListener(followLine, 'mouseover', function () {
+      console.log("On followline mouseover.");
+      polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair'});
+    });
+    
+    google.maps.event.addListener(followLine, 'mousemove', function () {
+      console.log("On on followLine mousemove.");
+      polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair'});
+    });
+    
+    google.maps.event.addListener(followLine, 'mouseout', function () {
+      console.log("On followline mouseout.");
+      polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair'});
+    });
+    
     google.maps.event.addListener(polygon.getMap(), 'mousemove', function(point) {
+      polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair' });
+      console.log("On Map mousemove.");
       if (self.closed != true) {
         polygon.setOptions(PolBeforeCloseOpts);
         var pathLength = polygon.getPath().getLength();

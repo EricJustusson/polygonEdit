@@ -39,14 +39,12 @@ function initialize () {
   draw = new polygonDrawer(mapPolygon, true);
   
   google.maps.event.addListener(mapPolygon, 'mousemove', function(point) {
-    console.log("on mapPolygon mousemove");
     mapPolygon.setOptions({ 
       fillColor: "#FF0000",
       fillOpacity: .35
       });
   });
   google.maps.event.addListener(mapPolygon, 'mouseout', function(point) {
-    console.log("on mapPolygon mousemove");
     mapPolygon.setOptions({ 
       fillColor: "#FF0000",
       fillOpacity: .15

@@ -211,7 +211,9 @@ function polygonDrawer(polygon, ghosts) {
            draggable : true,
            raiseOnDrag : false
          });
-         google.maps.event.addListener(markerGhostVertex, "mouseover", vertexGhostMouseOver);
+         google.maps.event.addListener(markerGhostVertex, "mouseover", vertexGhostMouseOver, function(){
+            polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair' });
+          });
          google.maps.event.addListener(markerGhostVertex, "mouseout", vertexGhostMouseOut);
          google.maps.event.addListener(markerGhostVertex, "drag", vertexGhostDrag);
          google.maps.event.addListener(markerGhostVertex, "dragend", vertexGhostDragEnd);
@@ -293,10 +295,10 @@ function polygonDrawer(polygon, ghosts) {
       createGhostMarkerVertex(vertex);
     });
     google.maps.event.clearListeners(polygon.getMap(), "click");
-    google.maps.event.addListener(polygon, 'mousemove', function (point) {
+    google.maps.event.addListener(polygon, 'mousemove', function () {
       polygon.setOptions(PolAfterCloseOpts);
     });
-    google.maps.event.addListener(polygon, 'mouseout', function(point) {
+    google.maps.event.addListener(polygon, 'mouseout', function () {
       polygon.setOptions(PolBeforeCloseOpts);
     });
     google.maps.event.clearListeners(polygon.getMap(), "mousemove");
@@ -319,7 +321,6 @@ function polygonDrawer(polygon, ghosts) {
     if (polygon.getPath().getLength() == 1){
       polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.drawControl.tooltip);
     }
-    
     google.maps.event.addListener(markerVertex, "mouseover", vertexMouseOver);
     google.maps.event.addListener(markerVertex, "mouseout", vertexMouseOut);
     google.maps.event.addListener(markerVertex, "drag", vertexDrag);
@@ -390,7 +391,7 @@ function polygonDrawer(polygon, ghosts) {
     self.closed = false;
     self.ghosts = false;
     self.drawing = true;
-    polygon.getMap().setOptions({ draggableCursor: 'crosshair' });
+    polygon.getMap().setOptions({ draggableCursor: 'url(css/crosshairs.png),crosshair'});
     
     google.maps.event.clearListeners(polygon.getMap(), "click");
     google.maps.event.clearListeners(polygon.getMap(), "mousemove");

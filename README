@@ -16,8 +16,9 @@ Things fixed:
 
 * Only show tooltip when a user creates a point on the map. Remove tooltip when the Polygon is closed.
 
+* Custom cursor with 'css/crosshairs.png' image
 
 
 STILL needs to be fixed:
 
-* Custom cursor with 'css/crosshairs.png' image
+* When you start creating points, the cursor changes between the custom crosshair one and the pointer, creates a kind of weird flashing effect

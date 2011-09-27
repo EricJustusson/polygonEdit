@@ -26,9 +26,7 @@ function drawControl() {
   text.innerHTML = 'Click the first point again<br />to finish drawing the shape.';
   text.style.marginTop = "-10px";
   this.tooltip.appendChild(text);
-  
   return self;
-  
 }
 
 function clearControl () {
@@ -62,29 +60,7 @@ function polygonDrawer(polygon, ghosts) {
                       strokeOpacity: .6,
                       strokeWeight: 3
                     });
-  /*
-  var boxText = document.createElement("div");
-  boxText.style.cssText = "border: 1px solid black; margin-top: 0px; background: white; padding: 5px;";
-  boxText.innerHTML = "Click on this point again to close the shape.";                    
-  var myOptions = {
-                   content: boxText
-                  ,disableAutoPan: true
-                  ,maxWidth: 0
-                  ,pixelOffset: new google.maps.Size(0, 0)
-                  ,zIndex: null
-                  ,boxStyle: { 
-                    opacity: 0.75
-                    ,width: "140px"
-                    ,height: "30px"
-                   }
-                  ,infoBoxClearance: new google.maps.Size(1, 1)
-                  ,isHidden: false
-                  ,pane: "mapPane"
-                  ,enableEventPropagation: false
-          };
-  
-  var infobox = new InfoBox(myOptions);
-  */
+ 
   var imgGhostVertex = new google.maps.MarkerImage(
                           'css/ghostVertex.png', new google.maps.Size(11, 11),
                           new google.maps.Point(0, 0), new google.maps.Point(6, 6)
@@ -310,7 +286,6 @@ function polygonDrawer(polygon, ghosts) {
   };
 
   var closePoly = function() {
-    //infobox.close();
     polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].clear();
     polygon.getMap().controls[google.maps.ControlPosition.TOP_RIGHT].push(self.clearUI);
     polygon.getMap().setOptions({ draggableCursor: 'pointer' });

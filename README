@@ -18,7 +18,4 @@ Things fixed:
 
 * Custom cursor with 'css/crosshairs.png' image
 
-
-STILL needs to be fixed:
-
 * When you start creating points, the cursor changes between the custom crosshair one and the pointer, creates a kind of weird flashing effect
